@@ -81,12 +81,15 @@ int main()
 		
 		if( frames == 8)
 		{
+			// Esta funcion da errores
 			cola.push_back(cabeza);
+			
 			if(engorda > 0)
 			{
 				engorda--;
 			} else
 			{
+				// Esta funciona da errores
 				cola.pop_back();
 			}
 		
