@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
-#include <cstdlib>
+#include <stdlib>
 
 
 #include <psp2/ctrl.h>
@@ -18,7 +18,8 @@
 
 #include "utils.h"
 #include "draw.h"
-#include <list>
+
+#include <vector>
 
 using namespace std;
 
@@ -36,31 +37,60 @@ void cuadrado(const Punto& p, uint32_t color)
 }
 
 
+bool colision(const Punto &cabeza, const vector<Punto> &cola)
+{
+	if (cabeza.x >= SCREEN_W || cabeza.x < 0) {
+		return true;
+	}
+	if (cabeza.y >= SCREEN_H || cabeza.y < 0) {
+		return true;
+	}
+	vector<Punto>::const_iterator it;
+	for (it = cola.begin(); it != cola.end(); it++) {
+		if (cabeza.x == it->x && cabeza.y == it->y) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+Punto aletorio()
+{
+	Punto p = {rand() % SCREEN_W, rand() % SCREEN_H};
+	return p;
+}
+
+
 PSP2_MODULE_INFO(0, 0, "SNAKE")
 int main()
 {
-	
+
 	SceCtrlData pad;
 	init_video();
-	
+
 	Punto cabeza = {30, 20};
+
+	Punto comida = aletorio();
+
+
 	int vx = 1, vy = 0;
-	
-	list<Punto> cola;
-	
+
+	vector <Punto> cola;
+
 	int frames = 0, engorda = 0;
-	
+ 	bool colision_bool = false;
 	while(1)
 	{
 		frames ++;
-		clear_screen();
+
 		sceCtrlPeekBufferPositive(0, &pad, 1);
-		
+
 		if (pad.buttons & PSP2_CTRL_START) {
 			break;
 			break;
 		}
-		
+
 		if(pad.buttons & PSP2_CTRL_UP)
 		{
 			vx = 0, vy = -1;
@@ -77,37 +107,43 @@ int main()
 		{
 			engorda = 5;
 		}
-		
-		
+
+
 		if( frames == 8)
 		{
-			// Esta funcion da errores
-			cola.push_back(cabeza);
-			
+
+			cola.insert(cola.begin(), cabeza);
+
 			if(engorda > 0)
 			{
 				engorda--;
 			} else
 			{
-				// Esta funciona da errores
+
 				cola.pop_back();
 			}
-		
+
 			cabeza.y += vy;
 			cabeza.x += vx;
+			if (colision(cabeza, cola)) {
+				colision_bool = true;
+			}
+
 			frames = 0;
 		}
-		list<Punto>::iterator it = cola.begin();
-		while( it != cola.end() )
-		{
-			cuadrado(*it, GREEN);
+		if (!colision_bool) {
+			clear_screen();
+			vector<Punto>::const_iterator it;
+			for (it = cola.begin(); it != cola.end(); it++)
+			{
+				cuadrado(*it, GREEN);
+			}
+			cuadrado(cabeza, RED);
+
+			swap_buffers();
+			sceDisplayWaitVblankStart();
 		}
 
-			
-		cuadrado(cabeza, RED);
-
-		swap_buffers();
-		sceDisplayWaitVblankStart();
 	}
 
 	end_video();
