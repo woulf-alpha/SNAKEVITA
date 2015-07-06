@@ -1,30 +1,26 @@
-#
-# Copyright (c) 2015 Sergi Granell (xerpi)
-# based on Cirne's vita-toolchain test Makefile
-#
 
 TARGET		:= SNAKE
 SOURCES		:= src
 INCLUDES	:= src
 
-CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
-CXXFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.cpp))
-OBJS     := $(CFILES:.c=.o) $(BUILD_APP) $(CXXFILES:.cpp=.o)
+CFILES   	:= $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
+CXXFILES    := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.cpp))
+OBJS     	:= $(CFILES:.c=.o) $(BUILD_APP) $(CXXFILES:.cpp=.o)
 
 LIBS = -lc_stub -lstdc++_stub -lSceKernel_stub -lSceDisplay_stub -lSceGxm_stub 	\
 	-lSceCtrl_stub -lSceTouch_stub
 
 DEFINES	=	-DPSP -DLSB_FIRST -DWANT_CRC32
 
-PREFIX  = arm-none-eabi
-AS	= $(PREFIX)-as
-CC      = $(PREFIX)-gcc
-CXX			=$(PREFIX)-g++
-READELF = $(PREFIX)-readelf
-OBJDUMP = $(PREFIX)-objdump
-CFLAGS  = -Wall -specs=$(PSP2SDK)/psp2.specs -I$(DATA)  $(DEFINES)
-CXXFLAGS = $(CFLAGS) -O2 -mword-relocations -fexceptions -fomit-frame-pointer -fno-unwind-tables -fno-rtti -fno-exceptions -Wno-deprecated -Wno-comment -Wno-sequence-point -std=c++11
-ASFLAGS = $(CFLAGS)
+PREFIX   = arm-none-eabi
+AS		 = $(PREFIX)-as
+CC       = $(PREFIX)-gcc
+CXX		 = $(PREFIX)-g++
+READELF  = $(PREFIX)-readelf
+OBJDUMP  = $(PREFIX)-objdump
+CFLAGS   = -Wall -specs=$(PSP2SDK)/psp2.specs -I$(DATA)  $(DEFINES)
+CXXFLAGS = $(CFLAGS) -O2 -mword-relocations  -fomit-frame-pointer -fno-unwind-tables -fno-rtti -Wno-deprecated -Wno-comment -Wno-sequence-point -std=c++11
+ASFLAGS  = $(CFLAGS)
 
 
 
